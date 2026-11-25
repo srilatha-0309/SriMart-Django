@@ -1,0 +1,580 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SriMart - Home</title>
+
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="logo">SriMart</div>
+
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-right">
+
+        <!-- SEARCH FORM -->
+
+        <form method="GET"
+              action="{% url 'home' %}#products"
+              class="nav-search">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search products..."
+                value="{{ search_query|default:'' }}"
+            >
+
+            <button type="submit">Search</button>
+
+        </form>
+
+        <!-- CART -->
+
+        <a href="{% url 'cart' %}" class="cart-link">
+            🛒 Cart
+        </a>
+
+        <!-- WISHLIST -->
+
+        <a href="{% url 'wishlist' %}" class="cart-link">
+            ❤️ Wishlist
+        </a>
+
+        <!-- PROFILE -->
+
+        {% if user.is_authenticated %}
+
+            <details class="profile-menu">
+
+                <summary class="profile-button">
+
+                    <div class="profile-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+
+                    <span>{{ user.username }}</span>
+                    <span class="arrow">⌄</span>
+
+                </summary>
+
+                <div class="profile-dropdown">
+
+                    <h3>My Account</h3>
+
+                    <a href="{% url 'profile' %}">
+                        👤 My Profile
+                    </a>
+
+                    <a href="{% url 'cart' %}">
+                        🛒 My Cart
+                    </a>
+
+                    <a href="{% url 'wishlist' %}">
+                        ❤️ My Wishlist
+                    </a>
+
+                    <a href="{% url 'my_orders' %}">
+    📦 My Orders
+</a>
+
+                    {% if user.is_superuser %}
+                        <a href="/admin/">
+                            ⚙️ Admin Dashboard
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'logout' %}" class="logout-link">
+                        🚪 Logout
+                    </a>
+
+                </div>
+
+            </details>
+
+        {% else %}
+
+            <a href="{% url 'login' %}" class="login-btn">
+                Login
+            </a>
+
+            <a href="{% url 'register' %}" class="register-btn">
+                Register
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+<!-- HERO SECTION -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <h1>
+            Authentic Andhra
+            <span>Non-Veg Pickles</span>
+        </h1>
+
+        <h2>Spicy. Tasty. Homemade with Love!</h2>
+
+        <p>
+            Experience the traditional taste of Andhra Pradesh.
+            Our delicious chicken, mutton, fish and prawns pickles
+            are prepared with authentic spices and rich flavors.
+            Every bite brings you the taste of home.
+        </p>
+
+        <button
+            class="shop-btn"
+            onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})">
+
+            Shop Now
+
+        </button>
+
+    </div>
+
+    <div class="hero-image">
+
+        <img
+          src="/media/products/chicken_pickle.jpg"
+          alt="Authentic Andhra Chicken Pickle">
+
+    </div>
+
+</section>
+
+
+<!-- CATEGORIES SECTION -->
+
+<section class="categories-section" id="categories">
+
+    <h2>Explore Our Categories</h2>
+
+    <p>Choose Your Favourite Pickle</p>
+
+    <div class="category-container">
+
+        <div class="category-card">
+
+            <div class="category-icon">🍗</div>
+
+            <h3>Chicken Pickles</h3>
+
+            <a href="{% url 'category_products' 'Chicken' %}">
+                Explore Now
+            </a>
+
+        </div>
+
+
+        <div class="category-card">
+
+            <div class="category-icon">🍖</div>
+
+            <h3>Mutton Pickles</h3>
+
+            <a href="{% url 'category_products' 'Mutton' %}">
+                Explore Now
+            </a>
+
+        </div>
+
+
+        <div class="category-card">
+
+            <div class="category-icon">🍤</div>
+
+            <h3>Prawns Pickles</h3>
+
+            <a href="{% url 'category_products' 'Prawns' %}">
+                Explore Now
+            </a>
+
+        </div>
+
+
+        <div class="category-card">
+
+            <div class="category-icon">🐟</div>
+
+            <h3>Fish Pickles</h3>
+
+            <a href="{% url 'category_products' 'Fish' %}">
+                Explore Now
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PRODUCTS SECTION -->
+
+<section class="products-section" id="products">
+
+    <h2>Our Spicy Non-Veg Pickles</h2>
+
+    <p class="section-description">
+        Authentic Andhra Spice. Unforgettable Taste!
+    </p>
+
+    <div class="product-container">
+
+        {% for product in products %}
+
+            <div class="product-card">
+
+                {% if product.image %}
+
+                    <img
+                        src="{{ product.image.url }}"
+                        alt="{{ product.name }}"
+                        class="product-image">
+
+                {% else %}
+
+                    <p>Image not available</p>
+
+                {% endif %}
+
+
+                <h3>{{ product.name }}</h3>
+
+                <p>{{ product.description }}</p>
+
+                <p class="price">
+                    ₹{{ product.price }}
+                </p>
+
+                <p>Category: {{ product.category }}</p>
+
+                <p>Available Stock: {{ product.stock }}</p>
+
+
+                <!-- WISHLIST BUTTON -->
+
+                <a
+                    href="{% url 'add_to_wishlist' product.id %}"
+                    class="wishlist-btn">
+
+                    ❤️ Add to Wishlist
+
+                </a>
+
+
+                <!-- ADD TO CART -->
+
+                <form
+                    method="POST"
+                    action="{% url 'add_to_cart' product.id %}">
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="cart-btn"
+                        {% if product.stock == 0 %}disabled{% endif %}>
+
+                        {% if product.stock == 0 %}
+                            Out of Stock
+                        {% else %}
+                            Add to Cart
+                        {% endif %}
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% empty %}
+
+            <p>No products available.</p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- ABOUT US SECTION -->
+
+<section class="about-section" id="about">
+
+    <div class="about-content">
+
+        <h2>About SriMart</h2>
+
+        <h3>Bringing Traditional Andhra Taste to Your Home!</h3>
+
+        <p>
+            Welcome to SriMart! We bring you the delicious and
+            authentic taste of traditional Andhra non-veg pickles.
+        </p>
+
+        <p>
+            From spicy chicken and mutton pickles to tasty fish
+            and prawns pickles, explore a variety of flavors
+            made for pickle lovers.
+        </p>
+
+        <p>
+            Our goal is to make your food experience special
+            with flavorful products and convenient online shopping.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- WHY CHOOSE US SECTION -->
+
+<section class="why-choose-section">
+
+    <h2>Why Choose SriMart?</h2>
+
+    <p class="section-description">
+        Quality and Taste in Every Bite!
+    </p>
+
+    <div class="why-choose-container">
+
+        <div class="why-card">
+
+            <div class="why-icon">🌶️</div>
+
+            <h3>Authentic Taste</h3>
+
+            <p>Enjoy traditional Andhra-style flavors.</p>
+
+        </div>
+
+
+        <div class="why-card">
+
+            <div class="why-icon">⭐</div>
+
+            <h3>Quality Products</h3>
+
+            <p>We focus on quality and great taste.</p>
+
+        </div>
+
+
+        <div class="why-card">
+
+            <div class="why-icon">🛒</div>
+
+            <h3>Easy Shopping</h3>
+
+            <p>Browse products and order conveniently online.</p>
+
+        </div>
+
+
+        <div class="why-card">
+
+            <div class="why-icon">🚚</div>
+
+            <h3>Customer Convenience</h3>
+
+            <p>A simple shopping experience from home.</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- SriMart at a Glance -->
+<section class="glance-section">
+    <div class="glance-container">
+
+        <div class="glance-heading">
+            <span>OUR GROWING COMMUNITY</span>
+            <h2>SriMart at a Glance</h2>
+            <p>A quick look at what makes SriMart special.</p>
+        </div>
+
+        <div class="glance-stats">
+
+            <div class="glance-card">
+                <div class="glance-icon">🛍️</div>
+                <h3 class="counter" data-target="{{ total_products }}">0</h3>
+                <p>Products</p>
+            </div>
+
+            <div class="glance-card">
+                <div class="glance-icon">🚚</div>
+                <h3 class="counter" data-target="{{ delivered_orders }}">0</h3>
+                <p>Orders Delivered</p>
+            </div>
+
+            <div class="glance-card">
+                <div class="glance-icon">⭐</div>
+                <h3 class="counter" data-target="{{ total_reviews }}">0</h3>
+                <p>Customer Reviews</p>
+            </div>
+
+            <div class="glance-card">
+                <div class="glance-icon">❤️</div>
+                <h3 class="counter" data-target="{{ total_customers }}">0</h3>
+                <p>Our Customers</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<!-- CONTACT US SECTION -->
+
+<section class="contact-section" id="contact">
+
+    <h2>Contact Us</h2>
+
+    <p class="section-description">
+        Have questions about our products? We would love to hear from you!
+    </p>
+
+    <div class="contact-container">
+
+        <div class="contact-info">
+
+            <h3>Get in Touch</h3>
+
+            <p>📍 SriMart - Authentic Andhra Pickles</p>
+
+            <p>📧 Contact us for product enquiries and orders.</p>
+
+            <p>❤️ Thank you for choosing SriMart!</p>
+
+        </div>
+
+
+        <div class="contact-form">
+
+            <h3>Send Us a Message</h3>
+
+            <form>
+
+                <input
+                    type="text"
+                    placeholder="Your Name"
+                    required>
+
+                <input
+                    type="email"
+                    placeholder="Your Email"
+                    required>
+
+                <input
+                    type="text"
+                    placeholder="Subject"
+                    required>
+
+                <textarea
+                    rows="5"
+                    placeholder="Write your message..."
+                    required></textarea>
+
+                <button type="button" class="contact-btn">
+                    Send Message
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+    <div class="footer-container">
+
+        <div class="footer-about">
+
+            <h2>SriMart</h2>
+
+            <p>
+                Authentic Andhra Non-Veg Pickles.
+                Bringing traditional taste to your home!
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <h3>Quick Links</h3>
+
+            <a href="/">Home</a>
+            <a href="#products">Products</a>
+            <a href="#categories">Categories</a>
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact Us</a>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <h3>My Account</h3>
+
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'cart' %}">My Cart</a>
+            <a href="{% url 'wishlist' %}">My Wishlist ❤️</a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 SriMart. All Rights Reserved.
+        </p>
+
+    </div>
+
+</footer>
+
+</body>
+</html>

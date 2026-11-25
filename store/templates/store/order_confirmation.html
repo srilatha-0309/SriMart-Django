@@ -1,0 +1,98 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Order Confirmation - SriMart</title>
+
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+
+<body class="cart-page">
+
+    <header class="cart-header">
+        <h1>SriMart</h1>
+        <a href="{% url 'home' %}">Home</a>
+    </header>
+
+    <main class="cart-container">
+
+        <div class="cart-summary">
+
+            <h1 style="color: green; text-align: center;">
+                🎉 Order Placed Successfully!
+            </h1>
+
+            <p style="text-align: center;">
+                Thank you for shopping with SriMart!
+            </p>
+
+            <hr>
+
+            <h2>Order Details</h2>
+
+            <p><strong>Order ID:</strong> #{{ order.id }}</p>
+
+            <p><strong>Name:</strong> {{ order.full_name }}</p>
+
+            <p><strong>Phone:</strong> {{ order.phone }}</p>
+
+            <p><strong>Address:</strong>
+                {{ order.address }}, {{ order.city }},
+                {{ order.state }} - {{ order.pincode }}
+            </p>
+
+            <p><strong>Payment:</strong>
+                {{ order.get_payment_method_display }}
+            </p>
+
+            <p><strong>Order Status:</strong>
+                {{ order.get_status_display }}
+            </p>
+
+            <hr>
+
+            <h3>Ordered Products</h3>
+
+            {% for item in order.items.all %}
+
+                <p>
+                    {{ item.product.name }}
+                    × {{ item.quantity }}
+                    — ₹{{ item.price }}
+                </p>
+
+            {% endfor %}
+
+            <hr>
+
+            <h2 style="text-align: center;">
+                Total Amount: ₹{{ order.total_amount }}
+            </h2>
+
+            <p style="text-align: center;">
+                Payment Method: Cash on Delivery
+            </p>
+
+            <div style="text-align: center; margin-top: 25px;">
+
+                <a href="{% url 'home' %}" class="checkout-btn">
+                    Continue Shopping
+                </a>
+
+                <a href="{% url 'my_orders' %}" class="checkout-btn">
+                    View My Orders
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Orders - SriMart</title>
+
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+
+<body>
+
+    <header class="cart-header">
+        <h1>SriMart</h1>
+        <a href="{% url 'home' %}">Continue Shopping</a>
+    </header>
+
+    <main class="cart-container">
+
+        <h2>My Orders 📦</h2>
+
+        {% if orders %}
+
+            {% for order in orders %}
+
+                <div class="cart-item">
+
+                    <div class="cart-product-info">
+
+                        <h3>Order #{{ order.id }}</h3>
+
+                        <p>
+                            Name: {{ order.full_name }}
+                        </p>
+
+                        <p>
+                            Phone: {{ order.phone }}
+                        </p>
+
+                        <p>
+                            Order Date: {{ order.created_at|date:"d M Y, h:i A" }}
+                        </p>
+
+                        <p>
+                            Payment: {{ order.get_payment_method_display }}
+                        </p>
+
+                        <p>
+                            Status: {{ order.get_status_display }}
+                        </p>
+
+                        <h3>
+                            Total: ₹{{ order.total_amount }}
+                        </h3>
+                        
+                        <a href="{% url 'track_order' order.id %}"
+                          class="track-order-btn">
+                          📦 Track Order
+                        </a>
+                        
+{% if order.status == 'Pending' %}
+
+    <form method="POST"
+          action="{% url 'cancel_order' order.id %}"
+          onsubmit="return confirm('Are you sure you want to cancel this order?');">
+
+        {% csrf_token %}
+
+        <button type="submit" class="cancel-order-btn">
+            ✖ Cancel Order
+        </button>
+
+    </form>
+
+{% elif order.status == 'Cancelled' %}
+
+    <p class="order-cancelled-label">
+        ❌ This Order is Cancelled
+    </p>
+
+{% endif %}
+
+ 
+
+                        <h4>Ordered Products:</h4>
+
+                        {% for item in order.items.all %}
+
+                            <p>
+                                {{ item.product.name }}
+                                × {{ item.quantity }}
+                                — ₹{{ item.price }}
+                            </p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-cart">
+                <h2>No Orders Yet!</h2>
+                <p>You haven't placed any orders.</p>
+
+                <a href="{% url 'home' %}">
+                    Start Shopping
+                </a>
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>
